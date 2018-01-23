@@ -11,39 +11,43 @@ socket.on('disconnect', function () {
 socket.on('newMessage', function(chat) {
 
     const formattedTime = moment(chat.createdAt).format('h:mm a');
-    const li = jQuery('<li></li>');
-    li.text(`${chat.from} ${formattedTime}: ${chat.text}`);
+    const template = jQuery('#message-template').html();
+    const html = Mustache.render(template, {
+        from: chat.from,
+        createdAt: formattedTime,
+        text: chat.text
+    });
 
-    jQuery('#messages').append(li);
+    jQuery('#messages').append(html);
+
+    // const formattedTime = moment(chat.createdAt).format('h:mm a');
+    // const li = jQuery('<li></li>');
+    // li.text(`${chat.from} ${formattedTime}: ${chat.text}`);
+
+    // jQuery('#messages').append(li);
 });
 
 socket.on('newLocationMessage', function(message) {
 
     const formattedTime = moment(message.createdAt).format('h:mm a');
-    const li = jQuery('<li></li>');
-    const a = jQuery('<a target="_blank">My current location</a>');
+    const template = jQuery('#location-message-template').html();
+    const html = Mustache.render(template, {
+        from: message.from,
+        createdAt: formattedTime,
+        url: message.url
+    });
 
-    li.text(`${message.from} ${formattedTime}: `);
-    a.attr('href', message.url);
-    li.append(a);
-    jQuery('#messages').append(li);
+    jQuery('#messages').append(html);
+
+    // const li = jQuery('<li></li>');
+    // const a = jQuery('<a target="_blank">My current location</a>');
+
+    // li.text(`${message.from} ${formattedTime}: `);
+    // a.attr('href', message.url);
+    // li.append(a);
+    // jQuery('#messages').append(li);
 });
 
-// socket.emit('createMessage', {
-//     from: 'Shaalu',
-//     text: 'Poda'
-// }, function(data) {
-//     console.log('Got it!', data);
-// });
-
-// $(function() {
-    
-//     $('#message-form').submit(function(e) {
-//     console.log('Received');
-//     e.preventDefault();
-// });
-
-// });
 
 jQuery('#message-form').on('submit',function(e){
     e.preventDefault();
